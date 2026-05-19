@@ -4,6 +4,8 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>الاختبار التكويني الثاني - علوم</title>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
 <style>
 *{box-sizing:border-box;margin:0;padding:0}
 body{font-family:'Segoe UI',Tahoma,Arial,sans-serif;direction:rtl;min-height:100vh;background:linear-gradient(135deg,#1a1a6e,#16213e,#0f3460,#533483);color:#fff;overflow-x:hidden}
@@ -17,10 +19,9 @@ body{font-family:'Segoe UI',Tahoma,Arial,sans-serif;direction:rtl;min-height:100
 .card{background:rgba(255,255,255,.1);backdrop-filter:blur(10px);border:1px solid rgba(255,255,255,.18);border-radius:16px;padding:22px;margin-bottom:16px}
 .fld{margin-bottom:13px}
 .fld label{display:block;font-size:12px;color:#a0c4ff;margin-bottom:4px;font-weight:600}
-.fld input,.fld select,.fld textarea{width:100%;padding:10px 13px;border-radius:9px;border:1px solid rgba(255,255,255,.28);background:rgba(255,255,255,.1);color:#fff;font-size:14px;font-family:inherit}
-.fld input::placeholder,.fld textarea::placeholder{color:rgba(255,255,255,.38)}
+.fld input,.fld select{width:100%;padding:10px 13px;border-radius:9px;border:1px solid rgba(255,255,255,.28);background:rgba(255,255,255,.1);color:#fff;font-size:14px;font-family:inherit}
+.fld input::placeholder{color:rgba(255,255,255,.38)}
 .fld select option{background:#1a1a6e}
-.fld textarea{resize:vertical;min-height:120px;font-size:12px}
 .g2{display:grid;grid-template-columns:1fr 1fr;gap:11px}
 .btn{display:block;width:100%;padding:12px;background:linear-gradient(135deg,#ffd700,#ff8c00);color:#1a1a6e;border:none;border-radius:11px;font-size:15px;font-weight:700;cursor:pointer;font-family:inherit;transition:all .2s}
 .btn:hover{transform:translateY(-2px);box-shadow:0 6px 18px rgba(255,215,0,.35)}
@@ -91,14 +92,11 @@ body{font-family:'Segoe UI',Tahoma,Arial,sans-serif;direction:rtl;min-height:100
 .cbtns{display:flex;gap:9px;justify-content:center;margin-top:18px}
 .cyes{padding:9px 24px;background:linear-gradient(135deg,#ff4444,#cc0000);color:#fff;border:none;border-radius:9px;font-size:13px;font-weight:700;cursor:pointer;font-family:inherit}
 .cno{padding:9px 24px;background:rgba(255,255,255,.1);color:#fff;border:1px solid rgba(255,255,255,.28);border-radius:9px;font-size:13px;cursor:pointer;font-family:inherit}
-.tst{position:fixed;top:16px;left:50%;transform:translateX(-50%) translateY(-120px);z-index:999;background:linear-gradient(135deg,#1a6e1a,#2da82d);color:#fff;padding:11px 22px;border-radius:13px;font-size:13px;font-weight:700;box-shadow:0 5px 20px rgba(0,200,0,.38);transition:transform .32s ease;text-align:center;pointer-events:none;max-width:88vw}
+.tst{position:fixed;top:16px;left:50%;transform:translateX(-50%) translateY(-120px);z-index:999;background:linear-gradient(135deg,#1a6e1a,#2da82d);color:#fff;padding:11px 22px;border-radius:13px;font-size:13px;font-weight:700;transition:transform .32s ease;text-align:center;pointer-events:none;max-width:88vw}
 .tst.show{transform:translateX(-50%) translateY(0)}
 .rcirc{width:110px;height:110px;border-radius:50%;margin:0 auto 16px;display:flex;flex-direction:column;align-items:center;justify-content:center;border:4px solid #ffd700;background:rgba(255,215,0,.1)}
 .rpct{font-size:28px;font-weight:700;color:#ffd700}
 .rsm{font-size:12px;color:#a0c4ff}
-/* result card */
-.res-code{background:rgba(0,0,0,.4);border:2px dashed #ffd700;border-radius:12px;padding:16px;margin:16px 0;font-family:monospace;font-size:12px;color:#64ff96;text-align:right;direction:rtl;line-height:2;word-break:break-all;white-space:pre-wrap}
-/* dashboard */
 .tabs{display:flex;gap:6px;margin-bottom:14px;flex-wrap:wrap}
 .tab{padding:7px 16px;border-radius:24px;font-size:12px;font-weight:600;cursor:pointer;border:1px solid rgba(255,255,255,.28);background:rgba(255,255,255,.07);color:#fff;font-family:inherit}
 .tab.act{background:linear-gradient(135deg,#ffd700,#ff8c00);color:#1a1a6e;border-color:transparent}
@@ -115,6 +113,8 @@ body{font-family:'Segoe UI',Tahoma,Arial,sans-serif;direction:rtl;min-height:100
 .gvg{background:rgba(100,200,255,.2);color:#64c8ff;border:1px solid #64c8ff}
 .gg{background:rgba(255,215,0,.2);color:#ffd700;border:1px solid #ffd700}
 .gbad{background:rgba(255,100,100,.2);color:#ff6464;border:1px solid #ff6464}
+.live-dot{width:8px;height:8px;border-radius:50%;background:#64ff96;display:inline-block;margin-left:5px;animation:pulse 1.5s infinite}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.3}}
 .hidden{display:none!important}
 </style>
 </head>
@@ -148,7 +148,6 @@ body{font-family:'Segoe UI',Tahoma,Arial,sans-serif;direction:rtl;min-height:100
     <p style="font-size:10px;opacity:.55;margin-top:3px">إعداد: الأستاذ عماد أبو حجيلة</p>
   </div>
 
-  <!-- landing -->
   <div class="card" id="pg-land" style="text-align:center">
     <p style="color:#a0c4ff;margin-bottom:18px;font-size:14px">اختر دورك للمتابعة</p>
     <div style="display:flex;gap:11px;justify-content:center;flex-wrap:wrap">
@@ -157,7 +156,6 @@ body{font-family:'Segoe UI',Tahoma,Arial,sans-serif;direction:rtl;min-height:100
     </div>
   </div>
 
-  <!-- teacher login -->
   <div class="card hidden" id="pg-tl">
     <h3 style="color:#ffd700;margin-bottom:14px">🔐 دخول المعلم</h3>
     <div class="fld"><label>رمز المعلم</label><input type="password" id="tl-i" placeholder="الرمز السري..."></div>
@@ -166,37 +164,27 @@ body{font-family:'Segoe UI',Tahoma,Arial,sans-serif;direction:rtl;min-height:100
     <button onclick="go('pg-land')" style="margin-top:7px;width:100%;padding:9px;background:transparent;border:1px solid rgba(255,255,255,.28);border-radius:9px;color:#fff;cursor:pointer;font-family:inherit;font-size:13px">رجوع</button>
   </div>
 
-  <!-- dashboard -->
   <div class="hidden" id="pg-dash">
     <div class="card">
-      <h3 style="color:#ffd700;margin-bottom:14px;font-size:15px">📋 لوحة المعلم — جمع النتائج</h3>
-      <p style="color:#a0c4ff;font-size:13px;margin-bottom:14px;line-height:1.9">
-        كل طالب بعد التسليم يحصل على <strong style="color:#ffd700">رمز نتيجة</strong>.<br>
-        الصق رموز الطلاب في الخانة أدناه (كل رمز في سطر) ثم اضغط <strong style="color:#64ff96">تحليل</strong>.
-      </p>
-      <div class="fld">
-        <label>الصق رموز النتائج هنا</label>
-        <textarea id="paste-area" placeholder="RESULT|اسم الطالب|الشعبة|MCQ|توصيل|ترتيب|المجموع|النسبة|التقدير|الزمن|الوقت&#10;RESULT|..."></textarea>
-      </div>
-      <button class="btn" onclick="parsePasted()">📊 تحليل النتائج</button>
-    </div>
-
-    <div class="hidden" id="dash-out">
-      <div class="card">
-        <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:9px;margin-bottom:14px">
-          <h3 style="color:#ffd700;font-size:15px">📊 النتائج</h3>
+      <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:9px;margin-bottom:14px">
+        <h3 style="color:#ffd700;font-size:15px">
+          📊 نتائج الطلاب
+          <span class="live-dot"></span>
+          <span style="font-size:10px;color:#64ff96">مباشر</span>
+        </h3>
+        <div style="display:flex;gap:7px;flex-wrap:wrap">
           <button class="btn2" style="background:rgba(100,255,150,.14);color:#64ff96;border:1px solid #64ff96" onclick="doXL()">⬇ Excel</button>
+          <button class="btn2" style="background:rgba(255,100,100,.14);color:#ff6464;border:1px solid #ff6464" onclick="doClear()">🗑 مسح الكل</button>
         </div>
-        <div class="tabs" id="dtabs"></div>
-        <div class="stats" id="dstats"></div>
-        <div style="overflow-x:auto"><table class="rt"><thead><tr>
-          <th>#</th><th>الاسم</th><th>الشعبة</th><th>MCQ(/8)</th><th>توصيل(/2)</th><th>ترتيب(/2)</th><th>المجموع(/12)</th><th>النسبة</th><th>التقدير</th><th>الزمن</th>
-        </tr></thead><tbody id="dbody"></tbody></table></div>
       </div>
+      <div class="tabs" id="dtabs"></div>
+      <div class="stats" id="dstats"></div>
+      <div style="overflow-x:auto"><table class="rt"><thead><tr>
+        <th>#</th><th>الاسم</th><th>الشعبة</th><th>MCQ(/8)</th><th>توصيل(/2)</th><th>ترتيب(/2)</th><th>المجموع(/12)</th><th>النسبة</th><th>التقدير</th><th>الزمن</th><th>وقت التسليم</th>
+      </tr></thead><tbody id="dbody"></tbody></table></div>
     </div>
   </div>
 
-  <!-- student reg -->
   <div class="card hidden" id="pg-reg">
     <h3 style="color:#ffd700;margin-bottom:5px;text-align:center">📝 بيانات الطالب</h3>
     <p style="text-align:center;font-size:12px;color:#a0c4ff;margin-bottom:14px">⏱ مدة الاختبار: <strong style="color:#ffd700">30 دقيقة</strong></p>
@@ -216,14 +204,13 @@ body{font-family:'Segoe UI',Tahoma,Arial,sans-serif;direction:rtl;min-height:100
     <button class="btn" onclick="doStart()">بدء الاختبار ←</button>
   </div>
 
-  <!-- quiz -->
   <div class="hidden" id="pg-quiz">
-    <div class="tmr" id="tmr">
+    <div class="tmr">
       <div><div style="font-size:10px;color:#a0c4ff;margin-bottom:2px">⏱ الوقت المتبقي</div><div class="tc" id="tc">30:00</div></div>
       <div class="tbr">
         <div style="font-size:10px;color:#a0c4ff" id="tl2">المستغرق: 0:00</div>
         <div class="tbr-bar"><div class="tbr-fill" id="tf" style="width:100%;background:linear-gradient(90deg,#64ff96,#ffd700)"></div></div>
-        <div style="font-size:10px;color:#a0c4ff;margin-top:3px;text-align:left" id="tp2">100% متبقٍ</div>
+        <div style="font-size:10px;color:#a0c4ff;margin-top:3px" id="tp2">100% متبقٍ</div>
       </div>
     </div>
     <div class="prog">
@@ -239,30 +226,34 @@ body{font-family:'Segoe UI',Tahoma,Arial,sans-serif;direction:rtl;min-height:100
     </div>
   </div>
 
-  <!-- result -->
   <div class="card hidden" id="pg-res" style="text-align:center">
+    <div style="font-size:48px;margin-bottom:8px" id="res-icon">🎉</div>
     <div class="rcirc"><div class="rpct" id="rpct">-</div><div class="rsm" id="rsc">-</div></div>
     <div style="font-size:19px;font-weight:700;color:#ffd700;margin-bottom:6px" id="rmsg"></div>
     <div style="font-size:13px;color:#a0c4ff;line-height:2;margin-bottom:16px" id="rsub"></div>
-
-    <div style="background:rgba(37,211,102,.1);border:1px solid rgba(37,211,102,.4);border-radius:12px;padding:16px;margin-bottom:16px;text-align:center">
-      <p style="color:#25d366;font-size:14px;font-weight:700;margin-bottom:12px">📲 أرسل نتيجتك للمعلم عبر واتساب</p>
-      <button onclick="sendWhatsApp(lastRec)" style="display:inline-flex;align-items:center;gap:10px;padding:13px 28px;background:linear-gradient(135deg,#25d366,#128c7e);color:#fff;border:none;border-radius:12px;font-size:15px;font-weight:700;cursor:pointer;font-family:inherit">
-        <span style="font-size:22px">💬</span> إرسال النتيجة للمعلم
-      </button>
+    <div style="background:rgba(100,255,150,.1);border:1px solid rgba(100,255,150,.3);border-radius:12px;padding:14px;margin-bottom:16px">
+      <p style="color:#64ff96;font-size:14px;font-weight:700">✅ تم إرسال نتيجتك للمعلم تلقائياً</p>
     </div>
-
     <div id="rev-area"></div>
   </div>
 </div>
 
-<script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js"></script>
 <script>
-emailjs.init('UpDhMgFQ7A1IwurFf');
+// Firebase config
+const firebaseConfig = {
+  apiKey: "AIzaSyC5DP8bza3BqXre7vGaT9oVzDbyPDK8igs",
+  authDomain: "quiz-science-f4d4c.firebaseapp.com",
+  databaseURL: "https://quiz-science-f4d4c-default-rtdb.firebaseio.com",
+  projectId: "quiz-science-f4d4c",
+  storageBucket: "quiz-science-f4d4c.firebasestorage.app",
+  messagingSenderId: "684686893616",
+  appId: "1:684686893616:web:0c48c57b81a8340df483f5"
+};
+firebase.initializeApp(firebaseConfig);
+const db = firebase.database();
+
 const TC='emad2026_teacher';
 const TOTAL=1800;
-const EJS_SVC='service_haclwvp';
-const EJS_TPL='template_x1nnk9a';
 
 // Stars
 const se=document.getElementById('stars');
@@ -280,47 +271,47 @@ window.addEventListener('blur',()=>{if(quizActive&&!visLocked)lockScr();});
 function lockScr(){visLocked=true;document.getElementById('blk').style.display='flex';document.getElementById('mc').style.filter='blur(12px)';}
 function unlockScreen(){const v=(document.getElementById('bci').value||'').trim();if(v===TC){visLocked=false;document.getElementById('blk').style.display='none';document.getElementById('mc').style.filter='none';document.getElementById('bci').value='';document.getElementById('bcerr').style.display='none';}else document.getElementById('bcerr').style.display='block';}
 
-function doTL(){const v=(document.getElementById('tl-i').value||'').trim();const err=document.getElementById('tl-e');if(v===TC){err.classList.add('hidden');document.getElementById('tl-i').value='';go('pg-dash');}else err.classList.remove('hidden');}
+function doTL(){const v=(document.getElementById('tl-i').value||'').trim();const err=document.getElementById('tl-e');if(v===TC){err.classList.add('hidden');document.getElementById('tl-i').value='';go('pg-dash');startLiveDash();}else err.classList.remove('hidden');}
 
 // Timer
-let tInt=null,sLeft=TOTAL,sUsed=0,w10=false,w5=false,w2=false;
+let tInt=null,sLeft=TOTAL,sUsed=0;
 const fmt=s=>`${String(Math.floor(s/60)).padStart(2,'0')}:${String(s%60).padStart(2,'0')}`;
 function startTimer(){
-  sLeft=TOTAL;sUsed=0;w10=w5=w2=false;
+  sLeft=TOTAL;sUsed=0;
   tInt=setInterval(()=>{
     sLeft--;sUsed++;
     const pct=Math.round(sLeft/TOTAL*100);
     const c=document.getElementById('tc'),f=document.getElementById('tf');
-    const ll=document.getElementById('tl2'),pl=document.getElementById('tp2');
-    if(c)c.textContent=fmt(sLeft);if(ll)ll.textContent='المستغرق: '+fmt(sUsed);if(pl)pl.textContent=pct+'% متبقٍ';
+    if(c)c.textContent=fmt(sLeft);
+    document.getElementById('tl2').textContent='المستغرق: '+fmt(sUsed);
+    document.getElementById('tp2').textContent=pct+'% متبقٍ';
     const bg=pct>50?'linear-gradient(90deg,#64ff96,#ffd700)':pct>20?'linear-gradient(90deg,#ffd700,#ff8c00)':'linear-gradient(90deg,#ff4444,#ff8c00)';
     if(f){f.style.width=pct+'%';f.style.background=bg;}
     if(c){c.className='tc';if(sLeft<=120)c.classList.add('danger');else if(sLeft<=300)c.classList.add('warn');}
-    if(sLeft===600&&!w10){w10=true;toast('⚠️ تبقّى 10 دقائق فقط!',6000);}
-    if(sLeft===300&&!w5){w5=true;toast('🔴 تبقّى 5 دقائق! أسرع.',7000);}
-    if(sLeft===120&&!w2){w2=true;toast('🚨 دقيقتان فقط!',8000);}
+    if(sLeft===600)toast('⚠️ تبقّى 10 دقائق!',6000);
+    if(sLeft===300)toast('🔴 تبقّى 5 دقائق!',7000);
+    if(sLeft===120)toast('🚨 دقيقتان فقط!',8000);
     if(sLeft<=0){clearInterval(tInt);toast('⌛ انتهى الوقت!',5000);setTimeout(()=>finish(true),1500);}
   },1000);
 }
 function stopTimer(){clearInterval(tInt);}
 
 const QS=[
-  {t:'mcq',lv:'r',lb:'التذكر',tp:'التجوية الفيزيائية',q:'أيٌّ مما يلي يُعدّ مثالاً على التجوية الفيزيائية؟',opts:['تحول لون مسمار حديدي إلى الصدأ','ذوبان الكالسيت في ماء مطر حمضي','تكسر صخر بفعل جذور النباتات','تغير معدن الفلسبار إلى طين'],ans:2,exp:'جذور النباتات تتغلغل في شقوق الصخر وتوسّعها ميكانيكياً دون تغيير تركيبه الكيميائي ← تجوية فيزيائية.'},
+  {t:'mcq',lv:'r',lb:'التذكر',tp:'التجوية الفيزيائية',q:'أيٌّ مما يلي يُعدّ مثالاً على التجوية الفيزيائية؟',opts:['تحول لون مسمار حديدي إلى الصدأ','ذوبان الكالسيت في ماء مطر حمضي','تكسر صخر بفعل جذور النباتات','تغير معدن الفلسبار إلى طين'],ans:2,exp:'جذور النباتات تتغلغل في شقوق الصخر وتوسّعها ميكانيكياً دون تغيير تركيبه الكيميائي.'},
   {t:'mcq',lv:'r',lb:'التذكر',tp:'الانجراف القاري',q:'مَن صاحب نظرية "الانجراف القاري"؟',opts:['ألفريد فيجنر','تشارلز داروين','جيمس هوتون','ماري كوري'],ans:0,exp:'ألفريد فيجنر اقترح فرضية الانجراف القاري عام 1912.'},
-  {t:'mcq',lv:'u',lb:'الفهم',tp:'أنواع التجوية',q:'أيٌّ من الجمل التالية يصف الفرق بين التجوية الفيزيائية والكيميائية؟',opts:['الفيزيائية تُغير التركيب، والكيميائية تُبقيه','الفيزيائية تُبقي التركيب، والكيميائية تُغيره','كلاهما تُغيران التركيب الكيميائي','كلاهما لا تُغيران التركيب'],ans:1,exp:'الفيزيائية: تُفتت الصخر ميكانيكياً. الكيميائية: تُغير تركيبه.'},
+  {t:'mcq',lv:'u',lb:'الفهم',tp:'أنواع التجوية',q:'أيٌّ من الجمل التالية يصف الفرق بين التجوية الفيزيائية والكيميائية؟',opts:['الفيزيائية تُغير التركيب، والكيميائية تُبقيه','الفيزيائية تُبقي التركيب، والكيميائية تُغيره','كلاهما تُغيران التركيب','كلاهما لا تُغيران التركيب'],ans:1,exp:'الفيزيائية: تُفتت الصخر ميكانيكياً. الكيميائية: تُغير تركيبه.'},
   {t:'mcq',lv:'u',lb:'الفهم',tp:'الصفائح التكتونية',q:'ما الذي يُحرّك الصفائح التكتونية؟',opts:['قوة جذب القمر','دوران الأرض','تيارات الحمل الحراري في الوشاح','الرياح والتيارات البحرية'],ans:2,exp:'تيارات الحمل الحراري في الوشاح تدفع الصفائح.'},
   {t:'mcq',lv:'a',lb:'التطبيق',tp:'عوامل التعرية',q:'أيٌّ من عوامل التعرية يُكوّن الوديان على شكل حرف U؟',opts:['المياه الجارية','الرياح','الجليد','الأمواج البحرية'],ans:2,exp:'الجليد يكشط قاع الوادي وجوانبه مُكوِّناً وديان عريضة على شكل U.'},
   {t:'mcq',lv:'a',lb:'التطبيق',tp:'الحدود التكتونية',q:'ماذا يحدث عند تصادم صفيحتين محيطيتين؟',opts:['تكوين حيد وسط المحيط','تكوين خندق عميق وجزر بركانية','زلازل فقط','وادٍ متصدع'],ans:1,exp:'تنزلق الأكثر كثافة مُكوِّنةً خندقاً عميقاً وجزراً بركانية.'},
   {t:'mcq',lv:'an',lb:'التحليل',tp:'الانجراف القاري',q:'أحافير الميزوصور موجودة في أمريكا الجنوبية وإفريقيا وهو لا يعيش في المياه المالحة. ماذا تستنتج؟',opts:['سبح عبر المحيط','القارتان كانتا متصلتين','الرياح نقلتها','الإنسان القديم نقلها'],ans:1,exp:'وجود الأحافير في القارتين دليل على اتصالهما قديماً.'},
-  {t:'mcq',lv:'an',lb:'التقويم',tp:'عوامل التجوية',q:'تمثال رخامي في منطقة ساحلية وآخر في صحراء — أيهما يتآكل أسرع؟',opts:['الصحراوي بسبب الرياح','الساحلي بسبب الرطوبة والأملاح والأمطار الحمضية','الصحراوي بسبب الحرارة','كلاهما بالمعدل نفسه'],ans:1,exp:'التجوية الكيميائية أشد في المناطق الرطبة الساحلية.'},
-  {t:'matching',lv:'a',lb:'التطبيق - توصيل',tp:'القوى والحدود',q:'وصّل كل نوع من أنواع الحدود التكتونية بالقوة المرتبطة به:\n(المتقارب: صفيحتان تتصادمان | المتباعد: صفيحتان تبتعدان | الانتقالي: صفيحتان تنزلقان أفقياً)',left:['الحد المتقارب','الحد المتباعد','الحد الانتقالي'],right:['قوة الشد','قوة القص','قوة الانضغاط'],correct:{0:2,1:0,2:1},exp:'المتقارب=انضغاط | المتباعد=شد | الانتقالي=قص.'},
+  {t:'mcq',lv:'an',lb:'التقويم',tp:'عوامل التجوية',q:'تمثال رخامي في منطقة ساحلية وآخر في صحراء — أيهما يتآكل أسرع؟',opts:['الصحراوي بسبب الرياح','الساحلي بسبب الرطوبة والأملاح','الصحراوي بسبب الحرارة','كلاهما بالمعدل نفسه'],ans:1,exp:'التجوية الكيميائية أشد في المناطق الرطبة الساحلية.'},
+  {t:'matching',lv:'a',lb:'التطبيق - توصيل',tp:'القوى والحدود',q:'وصّل كل نوع من أنواع الحدود التكتونية بالقوة المرتبطة به:',left:['الحد المتقارب','الحد المتباعد','الحد الانتقالي'],right:['قوة الشد','قوة القص','قوة الانضغاط'],correct:{0:2,1:0,2:1},exp:'المتقارب=انضغاط | المتباعد=شد | الانتقالي=قص.'},
   {t:'ordering',lv:'an',lb:'التحليل - ترتيب',tp:'دورة التجوية',q:'رتّب هذه العمليات من الأولى إلى الأخيرة:',items:[{id:'a',text:'استقرار المواد وتراكمها في موقع جديد'},{id:'b',text:'تفتت الصخور بفعل العوامل الطبيعية'},{id:'c',text:'حمل المواد ونقلها بالماء أو الرياح أو الجليد'},{id:'d',text:'انتزاع فتات الصخر وإزالته من موضعه'}],correct:['b','d','c','a'],exp:'التجوية ← التعرية ← النقل ← الترسيب.'}
 ];
 
 let cur=0,ANS=new Array(10).fill(null),sData={},lastRec={};
-let mSel=null,dragId=null;
+let mSel=null,dragId=null,activeTab='all',allResults=[];
 const lvC={r:'lr',u:'lu',a:'la',an:'lan'};
-let parsedResults=[];
 
 function doStart(){
   const name=(document.getElementById('rn').value||'').trim();
@@ -375,15 +366,14 @@ function pickOpt(i){ANS[cur]=i;renderNav();renderQ();}
 
 function renderMatch(q){
   const ua=ANS[cur]||{};
-  let h='<div class="mg">';
-  h+='<div><div class="mc">🔵 الحدود التكتونية</div>';
+  let h='<div class="mg"><div><div class="mc">🔵 الحدود التكتونية</div>';
   q.left.forEach((item,i)=>{const matched=ua[i]!==undefined,isSel=mSel===i;let cls='mi';if(matched)cls+=' mdone';else if(isSel)cls+=' msel';h+=`<div class="${cls}" onclick="${matched?'':'pLeft('+i+')'}">${item}${matched?' ✓':''}</div>`;});
   h+='</div><div><div class="mc">🟡 القوى</div>';
   const usedR=Object.values(ua);
   q.right.forEach((item,j)=>{const used=usedR.includes(j);let cls='mi mr';if(used)cls+=' mdone';h+=`<div class="${cls}" onclick="${used?'':'pRight('+j+')'}">${item}${used?' ✓':''}</div>`;});
   h+='</div></div>';
   if(Object.keys(ua).length>0){h+='<div class="conn">';Object.entries(ua).forEach(([k,v])=>{h+=`<div class="cr"><div class="cl">${q.left[k]}</div><span>→</span><div class="cv">${q.right[v]}</div></div>`;});h+='</div>';}
-  if(mSel===null&&Object.keys(ua).length<3)h+=`<div style="margin-top:9px;font-size:12px;color:#a0c4ff;text-align:center">اضغط حداً من اليسار ثم القوة المقابلة من اليمين</div>`;
+  if(mSel===null&&Object.keys(ua).length<3)h+=`<div style="margin-top:9px;font-size:12px;color:#a0c4ff;text-align:center">اضغط حداً من اليسار ثم القوة من اليمين</div>`;
   return h;
 }
 function pLeft(i){if(ANS[cur]&&ANS[cur][i]!==undefined)return;mSel=i;renderQ();}
@@ -429,77 +419,38 @@ async function finish(timed){
   const pct=Math.round(total/12*100);
   const gi=gradeInfo(pct);
   const ts=new Date().toLocaleString('ar-SA',{dateStyle:'short',timeStyle:'short'});
-  lastRec={name:sData.name,section:sData.sec,grade:sData.grade,score:total,mcqScore:mcqSc,matchScore:mSc,orderScore:oSc,pct,gradeLabel:gi.lbl,elapsed:fmt(sUsed),timedOut:timed,time:ts,mcqDetails:mcqD,matchAns:mA,orderAns:oA};
+  lastRec={name:sData.name,section:sData.sec,grade:sData.grade,score:total,mcqScore:mcqSc,matchScore:mSc,orderScore:oSc,pct,gradeLabel:gi.lbl,elapsed:fmt(sUsed),timedOut:timed,time:ts};
 
-
+  // حفظ في Firebase
+  try{
+    await db.ref('results').push(lastRec);
+    toast('✅ تم إرسال نتيجتك للمعلم!',4000);
+  }catch(e){
+    toast('⚠️ تعذّر الإرسال، تحقق من الاتصال.',4000);
+    console.error(e);
+  }
 
   showResult(pct,total,gi,timed,mcqD,mSc,oSc);
 }
 
 function gradeInfo(pct){
-  if(pct>=90)return{lbl:'ممتاز',cls:'gex'};
-  if(pct>=80)return{lbl:'جيد جداً',cls:'gvg'};
-  if(pct>=60)return{lbl:'جيد',cls:'gg'};
-  if(pct>=50)return{lbl:'مقبول',cls:'gg'};
-  return{lbl:'راسب',cls:'gbad'};
-}
-
-function sendWhatsApp(r){
-  const msg=
-`🏫 نتيجة اختبار العلوم - الصف السابع
-━━━━━━━━━━━━━━━━━━
-👤 الاسم: ${r.name}
-🏷 الشعبة: ${r.section}
-━━━━━━━━━━━━━━━━━━
-📝 MCQ: ${r.mcqScore}/8
-🔗 توصيل: ${r.matchScore.toFixed(1)}/2
-🔢 ترتيب: ${r.orderScore.toFixed(1)}/2
-━━━━━━━━━━━━━━━━━━
-🎯 المجموع: ${r.score}/12
-📊 النسبة: ${r.pct}%
-🏅 التقدير: ${r.gradeLabel}
-⏱ الزمن: ${r.elapsed}
-🕐 وقت التسليم: ${r.time}`;
-  const url='https://wa.me/00971525341122?text='+encodeURIComponent(msg);
-  window.open(url,'_blank');
-}
-
-function copyCode(){
-  const code=makeCode(lastRec);
-  const ta=document.createElement('textarea');
-  ta.value=code;
-  ta.style.cssText='position:fixed;top:0;left:0;opacity:0;font-size:16px';
-  document.body.appendChild(ta);
-  ta.focus();ta.select();
-  const ok=document.execCommand('copy');
-  document.body.removeChild(ta);
-  if(ok){
-    toast('✅ تم النسخ! أرسله للمعلم.',4000);
-  } else {
-    // إذا فشل النسخ، اعرض الرمز في prompt ليقدر ينسخه يدوياً
-    window.prompt('انسخ هذا الرمز وأرسله للمعلم:',code);
-  }
+  if(pct>=90)return{lbl:'ممتاز',cls:'gex',icon:'🏆'};
+  if(pct>=80)return{lbl:'جيد جداً',cls:'gvg',icon:'🥇'};
+  if(pct>=60)return{lbl:'جيد',cls:'gg',icon:'👍'};
+  if(pct>=50)return{lbl:'مقبول',cls:'gg',icon:'📚'};
+  return{lbl:'راسب',cls:'gbad',icon:'💡'};
 }
 
 function showResult(pct,total,gi,timed,mcqD,mSc,oSc){
   go('pg-res');
+  document.getElementById('res-icon').textContent=gi.icon;
   document.getElementById('rpct').textContent=pct+'%';
   document.getElementById('rsc').textContent=total+' / 12';
-  let msg='';
-  if(timed)msg='⌛ انتهى الوقت';
-  else if(pct>=90)msg='ممتاز جداً! 🌟';
-  else if(pct>=80)msg='جيد جداً! 🏅';
-  else if(pct>=60)msg='جيد 👍';
-  else if(pct>=50)msg='مقبول 📚';
-  else msg='لم تجتز الاختبار 💡';
+  let msg=timed?'⌛ انتهى الوقت':pct>=90?'ممتاز جداً! 🌟':pct>=80?'جيد جداً! 🏅':pct>=60?'جيد 👍':pct>=50?'مقبول 📚':'لم تجتز الاختبار 💡';
   document.getElementById('rmsg').textContent=msg;
   document.getElementById('rsub').innerHTML=`<span style="color:#a0c4ff">${lastRec.name} | شعبة ${lastRec.section}</span><br>
     <span style="font-size:11px;color:#64c8ff">MCQ: ${lastRec.mcqScore}/8 | توصيل: ${mSc.toFixed(1)}/2 | ترتيب: ${oSc.toFixed(1)}/2 | الزمن: ${lastRec.elapsed}</span>`;
 
-  // رمز النتيجة
-  document.getElementById('res-code').textContent=makeCode(lastRec);
-
-  // مراجعة تفصيلية
   let rev=`<div style="text-align:right;margin-top:14px"><h3 style="color:#ffd700;margin-bottom:14px;font-size:15px;border-bottom:1px solid rgba(255,215,0,.3);padding-bottom:8px">📋 مراجعة تفصيلية</h3>`;
   mcqD.forEach(d=>{
     const q=QS[d.qNum-1];const ok=d.correct;
@@ -511,49 +462,58 @@ function showResult(pct,total,gi,timed,mcqD,mSc,oSc){
   document.getElementById('rev-area').innerHTML=rev;
 }
 
-// ── لوحة المعلم ──────────────────────────────
-function parsePasted(){
-  const raw=document.getElementById('paste-area').value||'';
-  const lines=raw.split('\n').map(l=>l.trim()).filter(l=>l.startsWith('RESULT|'));
-  if(!lines.length){alert('لم يتم العثور على نتائج. تأكد أن كل سطر يبدأ بـ RESULT|');return;}
-  parsedResults=lines.map(l=>{
-    const p=l.split('|');
-    return{name:p[1]||'',section:p[2]||'',mcqScore:+p[3]||0,matchScore:+p[4]||0,orderScore:+p[5]||0,score:+p[6]||0,pct:+p[7]||0,gradeLabel:p[8]||'',elapsed:p[9]||'',time:p[10]||''};
+// ── لوحة المعلم - مباشر ──────────────────────
+function startLiveDash(){
+  db.ref('results').on('value', snap=>{
+    allResults=[];
+    snap.forEach(child=>{allResults.push({id:child.key,...child.val()});});
+    renderDash(activeTab);
   });
-  renderDash('all');
-  document.getElementById('dash-out').classList.remove('hidden');
 }
 
 function renderDash(sec){
-  const fil=sec==='all'?parsedResults:parsedResults.filter(r=>r.section===sec);
+  activeTab=sec;
+  const fil=sec==='all'?allResults:allResults.filter(r=>r.section===sec);
   const secs=['all','1','2','3','4','5','6'];
-  let th='';secs.forEach(s=>{const cnt=s==='all'?parsedResults.length:parsedResults.filter(r=>r.section===s).length;th+=`<button class="tab${s===sec?' act':''}" onclick="renderDash('${s}')">${s==='all'?`الكل(${cnt})`:`ش${s}(${cnt})`}</button>`;});
+  let th='';secs.forEach(s=>{const cnt=s==='all'?allResults.length:allResults.filter(r=>r.section===s).length;th+=`<button class="tab${s===sec?' act':''}" onclick="renderDash('${s}')">${s==='all'?`الكل(${cnt})`:`ش${s}(${cnt})`}</button>`;});
   document.getElementById('dtabs').innerHTML=th;
   const avg=fil.length?Math.round(fil.reduce((a,r)=>a+r.pct,0)/fil.length):0;
   const top=fil.length?Math.max(...fil.map(r=>r.pct)):0;
   const low=fil.length?Math.min(...fil.map(r=>r.pct)):0;
   const pass=fil.filter(r=>r.pct>=50).length;
+  const c90=fil.filter(r=>r.pct>=90).length;
   document.getElementById('dstats').innerHTML=`
     <div class="sc"><div class="sv">${fil.length}</div><div class="sl">الطلاب</div></div>
     <div class="sc"><div class="sv">${avg}%</div><div class="sl">المتوسط</div></div>
     <div class="sc"><div class="sv">${top}%</div><div class="sl">أعلى</div></div>
     <div class="sc"><div class="sv">${low}%</div><div class="sl">أدنى</div></div>
     <div class="sc"><div class="sv">${pass}</div><div class="sl">ناجح</div></div>
-    <div class="sc"><div class="sv">${fil.length-pass}</div><div class="sl">راسب</div></div>`;
+    <div class="sc"><div class="sv">${fil.length-pass}</div><div class="sl">راسب</div></div>
+    <div class="sc"><div class="sv">${c90}🏆</div><div class="sl">امتياز</div></div>`;
+  if(!fil.length){document.getElementById('dbody').innerHTML=`<tr><td colspan="11" style="text-align:center;padding:28px;color:rgba(255,255,255,.4)">في انتظار نتائج الطلاب...</td></tr>`;return;}
   const sorted=[...fil].sort((a,b)=>b.pct-a.pct);
   let rows='';
-  sorted.forEach((r,i)=>{const gi=gradeInfo(r.pct);rows+=`<tr><td>${i+1}</td><td style="text-align:right;font-weight:600">${r.name}${r.pct>=90?'🏆':r.pct>=80?'🥇':''}</td><td>${r.section}</td><td>${r.mcqScore}/8</td><td>${(+r.matchScore).toFixed(1)}/2</td><td>${(+r.orderScore).toFixed(1)}/2</td><td><strong>${r.score}/12</strong></td><td>${r.pct}%</td><td><span class="gp ${gi.cls}">${gi.lbl}</span></td><td style="color:#ffd700;font-size:10px">${r.elapsed}</td></tr>`;});
-  document.getElementById('dbody').innerHTML=rows||`<tr><td colspan="10" style="text-align:center;padding:20px;color:rgba(255,255,255,.4)">لا توجد نتائج</td></tr>`;
+  sorted.forEach((r,i)=>{const gi=gradeInfo(r.pct);rows+=`<tr><td>${i+1}</td><td style="text-align:right;font-weight:600">${r.name}${r.pct>=90?'🏆':r.pct>=80?'🥇':''}${r.timedOut?'⌛':''}</td><td>${r.section}</td><td>${r.mcqScore||0}/8</td><td>${(+r.matchScore||0).toFixed(1)}/2</td><td>${(+r.orderScore||0).toFixed(1)}/2</td><td><strong>${r.score}/12</strong></td><td>${r.pct}%</td><td><span class="gp ${gi.cls}">${gi.lbl}</span></td><td style="color:#ffd700;font-size:10px">${r.elapsed||'--'}</td><td style="font-size:10px;color:#a0c4ff">${r.time||'--'}</td></tr>`;});
+  document.getElementById('dbody').innerHTML=rows;
+}
+
+function doClear(){
+  showConf('🗑','مسح جميع النتائج','هل أنت متأكد؟ لا يمكن التراجع.',()=>{
+    db.ref('results').remove();
+    toast('✅ تم مسح جميع النتائج.',3000);
+  });
 }
 
 function doXL(){
-  if(!parsedResults.length){alert('لا توجد بيانات');return;}
-  const sorted=[...parsedResults].sort((a,b)=>a.section.localeCompare(b.section)||b.pct-a.pct);
-  let h=`<html><head><meta charset="UTF-8"></head><body><table border="1"><thead><tr style="background:#1a3a6b;color:#fff"><th>#</th><th>الاسم</th><th>الشعبة</th><th>MCQ/8</th><th>توصيل/2</th><th>ترتيب/2</th><th>المجموع/12</th><th>النسبة</th><th>التقدير</th><th>الزمن</th><th>وقت التسليم</th></tr></thead><tbody>`;
-  sorted.forEach((r,i)=>{const gi=gradeInfo(r.pct);const bg=i%2===0?'#f5f5f5':'#fff';h+=`<tr style="background:${bg}"><td>${i+1}</td><td>${r.name}</td><td>${r.section}</td><td>${r.mcqScore}</td><td>${(+r.matchScore).toFixed(1)}</td><td>${(+r.orderScore).toFixed(1)}</td><td>${r.score}</td><td>${r.pct}%</td><td>${gi.lbl}</td><td>${r.elapsed}</td><td>${r.time}</td></tr>`;});
+  if(!allResults.length){toast('❌ لا توجد بيانات',3000);return;}
+  const data=activeTab==='all'?allResults:allResults.filter(r=>r.section===activeTab);
+  const sorted=[...data].sort((a,b)=>a.section.localeCompare(b.section)||b.pct-a.pct);
+  let h=`<html><head><meta charset="UTF-8"></head><body><table border="1" style="font-family:Arial;direction:rtl"><thead><tr style="background:#1a3a6b;color:#fff;font-weight:bold"><th>#</th><th>الاسم</th><th>الشعبة</th><th>MCQ/8</th><th>توصيل/2</th><th>ترتيب/2</th><th>المجموع/12</th><th>النسبة</th><th>التقدير</th><th>الزمن</th><th>انتهى الوقت</th><th>وقت التسليم</th></tr></thead><tbody>`;
+  sorted.forEach((r,i)=>{const gi=gradeInfo(r.pct);const bg=i%2===0?'#f5f5f5':'#fff';const sc=r.pct>=90?'#006400':r.pct>=80?'#00008B':r.pct>=50?'#8B6914':'#8B0000';h+=`<tr style="background:${bg}"><td>${i+1}</td><td style="font-weight:bold">${r.name}</td><td>${r.section}</td><td>${r.mcqScore||0}</td><td>${(+r.matchScore||0).toFixed(1)}</td><td>${(+r.orderScore||0).toFixed(1)}</td><td style="font-weight:bold;color:${sc}">${r.score}</td><td style="color:${sc}">${r.pct}%</td><td style="font-weight:bold;color:${sc}">${gi.lbl}</td><td>${r.elapsed||'--'}</td><td>${r.timedOut?'نعم':'لا'}</td><td>${r.time||'--'}</td></tr>`;});
   h+=`</tbody></table></body></html>`;
   const b=new Blob([h],{type:'application/vnd.ms-excel;charset=utf-8'});
-  const u=URL.createObjectURL(b);const a=document.createElement('a');a.href=u;a.download='نتائج_الاختبار.xls';document.body.appendChild(a);a.click();document.body.removeChild(a);
+  const u=URL.createObjectURL(b);const a=document.createElement('a');a.href=u;a.download=`نتائج_${activeTab==='all'?'الكل':'شعبة_'+activeTab}.xls`;document.body.appendChild(a);a.click();document.body.removeChild(a);
+  toast('✅ تم تصدير Excel',3000);
 }
 </script>
 </body>
