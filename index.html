@@ -1,0 +1,520 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>الاختبار التكويني الثاني - علوم</title>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Segoe UI',Tahoma,Arial,sans-serif;direction:rtl;min-height:100vh;background:linear-gradient(135deg,#1a1a6e,#16213e,#0f3460,#533483);color:#fff;overflow-x:hidden}
+.stars{position:fixed;inset:0;pointer-events:none;z-index:0}
+.star{position:absolute;background:#fff;border-radius:50%;animation:twk 3s infinite}
+@keyframes twk{0%,100%{opacity:.15}50%{opacity:.9}}
+.w{position:relative;z-index:1;max-width:800px;margin:0 auto;padding:14px}
+.hdr{background:rgba(255,255,255,.1);backdrop-filter:blur(10px);border:1px solid rgba(255,255,255,.18);border-radius:16px;padding:18px;text-align:center;margin-bottom:16px}
+.hdr h1{font-size:17px;font-weight:700;color:#ffd700;margin-bottom:5px}
+.hdr p{font-size:12px;opacity:.85;margin:2px 0;color:#e0e0ff}
+.card{background:rgba(255,255,255,.1);backdrop-filter:blur(10px);border:1px solid rgba(255,255,255,.18);border-radius:16px;padding:22px;margin-bottom:16px}
+.fld{margin-bottom:13px}
+.fld label{display:block;font-size:12px;color:#a0c4ff;margin-bottom:4px;font-weight:600}
+.fld input,.fld select{width:100%;padding:10px 13px;border-radius:9px;border:1px solid rgba(255,255,255,.28);background:rgba(255,255,255,.1);color:#fff;font-size:14px;font-family:inherit}
+.fld input::placeholder{color:rgba(255,255,255,.38)}
+.fld select option{background:#1a1a6e}
+.g2{display:grid;grid-template-columns:1fr 1fr;gap:11px}
+.btn{display:block;width:100%;padding:12px;background:linear-gradient(135deg,#ffd700,#ff8c00);color:#1a1a6e;border:none;border-radius:11px;font-size:15px;font-weight:700;cursor:pointer;font-family:inherit;transition:all .2s}
+.btn:hover{transform:translateY(-2px);box-shadow:0 6px 18px rgba(255,215,0,.35)}
+.btn2{padding:10px 22px;border-radius:10px;font-size:13px;font-weight:600;cursor:pointer;font-family:inherit;transition:all .2s;border:none}
+.err{color:#ff6464;font-size:12px;margin-bottom:8px}
+.tmr{position:sticky;top:7px;z-index:50;background:rgba(4,4,28,.92);border:1px solid rgba(255,255,255,.14);border-radius:14px;padding:11px 16px;margin-bottom:14px;display:flex;align-items:center;gap:13px;flex-wrap:wrap}
+.tc{font-size:26px;font-weight:700;letter-spacing:2px;color:#ffd700;min-width:78px}
+.tc.warn{color:#ff8c00;animation:blk .9s infinite}
+.tc.danger{color:#ff3333;animation:blk .42s infinite}
+@keyframes blk{0%,100%{opacity:1}50%{opacity:.25}}
+.tbr{flex:1;min-width:90px}
+.tbr-bar{height:8px;background:rgba(255,255,255,.14);border-radius:8px;overflow:hidden;margin-top:5px}
+.tbr-fill{height:100%;border-radius:8px;transition:width .9s linear,background .5s}
+.prog{margin-bottom:16px}
+.prog-info{display:flex;justify-content:space-between;font-size:12px;color:#a0c4ff;margin-bottom:5px}
+.prog-bar{height:6px;background:rgba(255,255,255,.18);border-radius:8px;overflow:hidden}
+.prog-fill{height:100%;background:linear-gradient(90deg,#ffd700,#ff8c00);border-radius:8px;transition:width .4s}
+.qnav{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:14px;justify-content:center}
+.qdot{width:32px;height:32px;border-radius:50%;border:2px solid rgba(255,255,255,.3);background:rgba(255,255,255,.07);color:#fff;font-size:12px;font-weight:600;cursor:pointer;transition:all .2s;display:flex;align-items:center;justify-content:center}
+.qdot.cur{border-color:#ffd700;background:rgba(255,215,0,.25);color:#ffd700}
+.qdot.ans{background:rgba(100,255,150,.18);border-color:#64ff96;color:#64ff96}
+.qbg{display:inline-block;background:linear-gradient(135deg,#ffd700,#ff8c00);color:#1a1a6e;padding:3px 12px;border-radius:16px;font-size:11px;font-weight:700;margin-bottom:9px}
+.lvbg{display:inline-block;padding:3px 10px;border-radius:16px;font-size:10px;font-weight:600;margin-right:5px;margin-bottom:9px}
+.lr{background:rgba(100,200,255,.2);color:#64c8ff;border:1px solid #64c8ff}
+.lu{background:rgba(100,255,150,.2);color:#64ff96;border:1px solid #64ff96}
+.la{background:rgba(255,200,100,.2);color:#ffc864;border:1px solid #ffc864}
+.lan{background:rgba(255,100,200,.2);color:#ff64c8;border:1px solid #ff64c8}
+.qtxt{font-size:15px;font-weight:600;line-height:1.9;margin-bottom:14px}
+.opts{display:flex;flex-direction:column;gap:8px}
+.opt{display:flex;align-items:center;gap:10px;padding:11px 15px;border:1.5px solid rgba(255,255,255,.2);border-radius:11px;cursor:pointer;transition:all .2s;background:rgba(255,255,255,.05);color:#fff;font-size:13px;user-select:none}
+.opt:hover{border-color:#ffd700;background:rgba(255,215,0,.09)}
+.opt.sel{border-color:#ffd700;background:rgba(255,215,0,.16)}
+.oltr{width:28px;height:28px;border-radius:50%;background:rgba(255,255,255,.1);display:flex;align-items:center;justify-content:center;font-weight:700;font-size:12px;flex-shrink:0}
+.mg{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:9px}
+.mc{font-size:11px;color:#a0c4ff;margin-bottom:7px;text-align:center;font-weight:600}
+.mi{padding:9px 12px;margin-bottom:7px;border-radius:9px;cursor:pointer;border:2px solid rgba(255,255,255,.2);background:rgba(255,255,255,.06);color:#fff;font-size:13px;font-weight:600;text-align:center;transition:all .2s;user-select:none}
+.mi:hover{border-color:#ffd700}
+.mi.msel{border-color:#ffd700;background:rgba(255,215,0,.15)}
+.mi.mdone{border-color:#64ff96;background:rgba(100,255,150,.1);cursor:default}
+.mi.mr{color:#ffd700;border-color:rgba(255,215,0,.3);background:rgba(255,215,0,.05)}
+.mi.mr.mdone{border-color:#64ff96;color:#64ff96}
+.conn{margin-top:10px}
+.cr{display:flex;align-items:center;gap:7px;margin-bottom:7px;padding:7px 11px;border-radius:9px;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.1);font-size:12px}
+.cl{flex:1;color:#ffd700;font-weight:600}
+.cv{flex:1;color:#64ff96}
+.ol{display:flex;flex-direction:column;gap:8px;margin-bottom:11px}
+.oi{display:flex;align-items:center;gap:10px;padding:11px 14px;border-radius:11px;border:2px solid rgba(255,215,0,.3);background:rgba(255,255,255,.06);cursor:grab;transition:all .2s;user-select:none}
+.oi:hover{border-color:#ffd700;background:rgba(255,215,0,.08)}
+.oi.dov{border-color:#64ff96;background:rgba(100,255,150,.1)}
+.oi.drg{opacity:.35}
+.onum{width:26px;height:26px;border-radius:50%;background:rgba(255,215,0,.22);color:#ffd700;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:12px;flex-shrink:0}
+.rev-item{margin-bottom:12px;padding:14px;border-radius:12px;border:1px solid rgba(255,255,255,.12);background:rgba(255,255,255,.05)}
+.rev-item.rok{border-color:rgba(100,255,150,.4)}
+.rev-item.rng{border-color:rgba(255,100,100,.4)}
+.nav{display:flex;gap:9px;justify-content:center;margin-top:16px;flex-wrap:wrap}
+.nb{padding:10px 24px;border-radius:11px;font-size:13px;font-weight:600;cursor:pointer;font-family:inherit;transition:all .2s}
+.nb.nx{background:linear-gradient(135deg,#ffd700,#ff8c00);color:#1a1a6e;border:none}
+.nb.pv{background:rgba(255,255,255,.1);color:#fff;border:1px solid rgba(255,255,255,.28)}
+.nb.sub{background:linear-gradient(135deg,#64ff96,#00cc66);color:#000;border:none;font-size:14px;padding:12px 32px}
+.nb:hover{transform:translateY(-2px)}
+.blk{display:none;position:fixed;inset:0;background:linear-gradient(135deg,#1a0000,#3d0000);z-index:1000;align-items:center;justify-content:center;flex-direction:column;text-align:center;padding:26px}
+.blk h2{font-size:22px;color:#ff4444;margin-bottom:12px}
+.blk p{color:#ffaaaa;margin-bottom:20px;line-height:1.8}
+.bci{padding:11px 16px;border-radius:9px;border:2px solid #ff4444;background:rgba(255,0,0,.1);color:#fff;font-size:15px;text-align:center;margin-bottom:9px;width:100%;max-width:260px;font-family:inherit}
+.ubtn{padding:11px 26px;background:linear-gradient(135deg,#ffd700,#ff8c00);color:#1a1a6e;border:none;border-radius:10px;font-size:14px;font-weight:700;cursor:pointer;font-family:inherit}
+.cov{display:none;position:fixed;inset:0;background:rgba(0,0,0,.75);z-index:2000;align-items:center;justify-content:center;direction:rtl}
+.cbox{background:#1a1a6e;border:1px solid rgba(255,215,0,.38);border-radius:16px;padding:26px;max-width:340px;width:90%;text-align:center}
+.cbtns{display:flex;gap:9px;justify-content:center;margin-top:18px}
+.cyes{padding:9px 24px;background:linear-gradient(135deg,#ff4444,#cc0000);color:#fff;border:none;border-radius:9px;font-size:13px;font-weight:700;cursor:pointer;font-family:inherit}
+.cno{padding:9px 24px;background:rgba(255,255,255,.1);color:#fff;border:1px solid rgba(255,255,255,.28);border-radius:9px;font-size:13px;cursor:pointer;font-family:inherit}
+.tst{position:fixed;top:16px;left:50%;transform:translateX(-50%) translateY(-120px);z-index:999;background:linear-gradient(135deg,#1a6e1a,#2da82d);color:#fff;padding:11px 22px;border-radius:13px;font-size:13px;font-weight:700;transition:transform .32s ease;text-align:center;pointer-events:none;max-width:88vw}
+.tst.show{transform:translateX(-50%) translateY(0)}
+.rcirc{width:110px;height:110px;border-radius:50%;margin:0 auto 16px;display:flex;flex-direction:column;align-items:center;justify-content:center;border:4px solid #ffd700;background:rgba(255,215,0,.1)}
+.rpct{font-size:28px;font-weight:700;color:#ffd700}
+.rsm{font-size:12px;color:#a0c4ff}
+.tabs{display:flex;gap:6px;margin-bottom:14px;flex-wrap:wrap}
+.tab{padding:7px 16px;border-radius:24px;font-size:12px;font-weight:600;cursor:pointer;border:1px solid rgba(255,255,255,.28);background:rgba(255,255,255,.07);color:#fff;font-family:inherit}
+.tab.act{background:linear-gradient(135deg,#ffd700,#ff8c00);color:#1a1a6e;border-color:transparent}
+.stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(80px,1fr));gap:9px;margin-bottom:14px}
+.sc{background:rgba(255,255,255,.07);border-radius:11px;padding:11px;text-align:center;border:1px solid rgba(255,255,255,.1)}
+.sv{font-size:18px;font-weight:700;color:#ffd700}
+.sl{font-size:10px;color:#a0c4ff;margin-top:2px}
+.rt{width:100%;border-collapse:collapse;font-size:11px}
+.rt th{background:rgba(255,215,0,.18);padding:8px 6px;border:1px solid rgba(255,255,255,.1);color:#ffd700;font-weight:600;white-space:nowrap}
+.rt td{padding:7px 6px;border:1px solid rgba(255,255,255,.09);text-align:center;vertical-align:middle}
+.rt tr:nth-child(even) td{background:rgba(255,255,255,.03)}
+.gp{display:inline-block;padding:2px 8px;border-radius:14px;font-weight:700;font-size:10px}
+.gex{background:rgba(100,255,150,.2);color:#64ff96;border:1px solid #64ff96}
+.gvg{background:rgba(100,200,255,.2);color:#64c8ff;border:1px solid #64c8ff}
+.gg{background:rgba(255,215,0,.2);color:#ffd700;border:1px solid #ffd700}
+.gbad{background:rgba(255,100,100,.2);color:#ff6464;border:1px solid #ff6464}
+.live-dot{width:8px;height:8px;border-radius:50%;background:#64ff96;display:inline-block;margin-left:5px;animation:pulse 1.5s infinite}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.3}}
+.hidden{display:none!important}
+</style>
+</head>
+<body>
+<div class="stars" id="stars"></div>
+<div class="tst" id="tst"></div>
+
+<div class="blk" id="blk">
+  <div style="font-size:65px;margin-bottom:14px">🔒</div>
+  <h2>تم إيقاف الاختبار</h2>
+  <p>غادرت نافذة الاختبار.<br>تواصل مع المعلم للحصول على رمز التفعيل.</p>
+  <input class="bci" type="password" id="bci" placeholder="رمز المعلم...">
+  <div style="color:#ff6464;font-size:12px;margin-bottom:9px;display:none" id="bcerr">رمز خاطئ</div>
+  <button class="ubtn" onclick="unlockScreen()">تفعيل ←</button>
+</div>
+
+<div class="cov" id="cov">
+  <div class="cbox">
+    <div style="font-size:36px;margin-bottom:9px" id="cic">⚠️</div>
+    <div style="font-size:15px;font-weight:700;color:#fff;margin-bottom:6px" id="ctit"></div>
+    <div style="font-size:13px;color:#a0c4ff;line-height:1.8;white-space:pre-wrap" id="cmsg"></div>
+    <div class="cbtns"><button class="cyes" id="cyes">تأكيد</button><button class="cno" onclick="closeConf()">إلغاء</button></div>
+  </div>
+</div>
+
+<div class="w" id="mc">
+  <div class="hdr">
+    <h1>🏫 محمد بن حمد الشرقي - حلقة ثانية بنين</h1>
+    <p>مادة: العلوم &nbsp;|&nbsp; الصف السابع</p>
+    <p>الاختبار التكويني الثاني - الفصل الثالث 2026</p>
+    <p style="font-size:10px;opacity:.55;margin-top:3px">إعداد: الأستاذ عماد أبو حجيلة</p>
+  </div>
+
+  <div class="card" id="pg-land" style="text-align:center">
+    <p style="color:#a0c4ff;margin-bottom:18px;font-size:14px">اختر دورك للمتابعة</p>
+    <div style="display:flex;gap:11px;justify-content:center;flex-wrap:wrap">
+      <button class="btn" style="width:auto;padding:11px 30px" onclick="go('pg-reg')">🎒 طالب - أبدأ الاختبار</button>
+      <button class="btn" style="width:auto;padding:11px 30px;background:linear-gradient(135deg,#533483,#1a1a6e);color:#ffd700" onclick="go('pg-tl')">👨‍🏫 معلم</button>
+    </div>
+  </div>
+
+  <div class="card hidden" id="pg-tl">
+    <h3 style="color:#ffd700;margin-bottom:14px">🔐 دخول المعلم</h3>
+    <div class="fld"><label>رمز المعلم</label><input type="password" id="tl-i" placeholder="الرمز السري..."></div>
+    <div class="err hidden" id="tl-e">رمز خاطئ</div>
+    <button class="btn" onclick="doTL()">دخول ←</button>
+    <button onclick="go('pg-land')" style="margin-top:7px;width:100%;padding:9px;background:transparent;border:1px solid rgba(255,255,255,.28);border-radius:9px;color:#fff;cursor:pointer;font-family:inherit;font-size:13px">رجوع</button>
+  </div>
+
+  <div class="hidden" id="pg-dash">
+    <div class="card">
+      <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:9px;margin-bottom:14px">
+        <h3 style="color:#ffd700;font-size:15px">
+          📊 نتائج الطلاب
+          <span class="live-dot"></span>
+          <span style="font-size:10px;color:#64ff96">مباشر</span>
+        </h3>
+        <div style="display:flex;gap:7px;flex-wrap:wrap">
+          <button class="btn2" style="background:rgba(100,255,150,.14);color:#64ff96;border:1px solid #64ff96" onclick="doXL()">⬇ Excel</button>
+          <button class="btn2" style="background:rgba(255,100,100,.14);color:#ff6464;border:1px solid #ff6464" onclick="doClear()">🗑 مسح الكل</button>
+        </div>
+      </div>
+      <div class="tabs" id="dtabs"></div>
+      <div class="stats" id="dstats"></div>
+      <div style="overflow-x:auto"><table class="rt"><thead><tr>
+        <th>#</th><th>الاسم</th><th>الشعبة</th><th>MCQ(/8)</th><th>توصيل(/2)</th><th>ترتيب(/2)</th><th>المجموع(/12)</th><th>النسبة</th><th>التقدير</th><th>الزمن</th><th>وقت التسليم</th>
+      </tr></thead><tbody id="dbody"></tbody></table></div>
+    </div>
+  </div>
+
+  <div class="card hidden" id="pg-reg">
+    <h3 style="color:#ffd700;margin-bottom:5px;text-align:center">📝 بيانات الطالب</h3>
+    <p style="text-align:center;font-size:12px;color:#a0c4ff;margin-bottom:14px">⏱ مدة الاختبار: <strong style="color:#ffd700">30 دقيقة</strong></p>
+    <div class="fld"><label>اسم الطالب كاملاً *</label><input type="text" id="rn" placeholder="الاسم الرباعي..."></div>
+    <div class="g2">
+      <div class="fld"><label>الصف</label>
+        <select id="rg"><option value="">اختر</option><option value="7">7</option></select>
+      </div>
+      <div class="fld"><label>الشعبة</label>
+        <select id="rs"><option value="">اختر</option>
+          <option>1</option><option>2</option><option>3</option>
+          <option>4</option><option>5</option><option>6</option>
+        </select>
+      </div>
+    </div>
+    <div class="err hidden" id="re"></div>
+    <button class="btn" onclick="doStart()">بدء الاختبار ←</button>
+  </div>
+
+  <div class="hidden" id="pg-quiz">
+    <div class="tmr">
+      <div><div style="font-size:10px;color:#a0c4ff;margin-bottom:2px">⏱ الوقت المتبقي</div><div class="tc" id="tc">30:00</div></div>
+      <div class="tbr">
+        <div style="font-size:10px;color:#a0c4ff" id="tl2">المستغرق: 0:00</div>
+        <div class="tbr-bar"><div class="tbr-fill" id="tf" style="width:100%;background:linear-gradient(90deg,#64ff96,#ffd700)"></div></div>
+        <div style="font-size:10px;color:#a0c4ff;margin-top:3px" id="tp2">100% متبقٍ</div>
+      </div>
+    </div>
+    <div class="prog">
+      <div class="prog-info"><span id="plbl">السؤال 1 من 10</span><span id="ppct">0%</span></div>
+      <div class="prog-bar"><div class="prog-fill" id="pf" style="width:0%"></div></div>
+    </div>
+    <div class="qnav" id="qnav"></div>
+    <div class="card" id="qbox"></div>
+    <div class="nav">
+      <button class="nb nx" id="nxt" onclick="goNext()">التالي ←</button>
+      <button class="nb pv hidden" id="prv" onclick="goPrev()">→ السابق</button>
+      <button class="nb sub hidden" id="subbtn" onclick="confirmSubmit()">✅ تسليم الاختبار</button>
+    </div>
+  </div>
+
+  <div class="card hidden" id="pg-res" style="text-align:center">
+    <div style="font-size:48px;margin-bottom:8px" id="res-icon">🎉</div>
+    <div class="rcirc"><div class="rpct" id="rpct">-</div><div class="rsm" id="rsc">-</div></div>
+    <div style="font-size:19px;font-weight:700;color:#ffd700;margin-bottom:6px" id="rmsg"></div>
+    <div style="font-size:13px;color:#a0c4ff;line-height:2;margin-bottom:16px" id="rsub"></div>
+    <div style="background:rgba(100,255,150,.1);border:1px solid rgba(100,255,150,.3);border-radius:12px;padding:14px;margin-bottom:16px">
+      <p style="color:#64ff96;font-size:14px;font-weight:700">✅ تم إرسال نتيجتك للمعلم تلقائياً</p>
+    </div>
+    <div id="rev-area"></div>
+  </div>
+</div>
+
+<script>
+// Firebase config
+const firebaseConfig = {
+  apiKey: "AIzaSyC5DP8bza3BqXre7vGaT9oVzDbyPDK8igs",
+  authDomain: "quiz-science-f4d4c.firebaseapp.com",
+  databaseURL: "https://quiz-science-f4d4c-default-rtdb.firebaseio.com",
+  projectId: "quiz-science-f4d4c",
+  storageBucket: "quiz-science-f4d4c.firebasestorage.app",
+  messagingSenderId: "684686893616",
+  appId: "1:684686893616:web:0c48c57b81a8340df483f5"
+};
+firebase.initializeApp(firebaseConfig);
+const db = firebase.database();
+
+const TC='emad2026_teacher';
+const TOTAL=1800;
+
+// Stars
+const se=document.getElementById('stars');
+for(let i=0;i<55;i++){const s=document.createElement('div');s.className='star';const z=Math.random()*3+1;s.style.cssText=`width:${z}px;height:${z}px;top:${Math.random()*100}%;left:${Math.random()*100}%;animation-delay:${Math.random()*3}s;animation-duration:${2+Math.random()*3}s`;se.appendChild(s);}
+
+const PGS=['pg-land','pg-tl','pg-dash','pg-reg','pg-quiz','pg-res'];
+function go(id){PGS.forEach(p=>{const e=document.getElementById(p);if(e)e.classList.toggle('hidden',p!==id);});}
+function toast(msg,dur=4000){const t=document.getElementById('tst');t.innerHTML=msg;t.classList.add('show');clearTimeout(t._t);t._t=setTimeout(()=>t.classList.remove('show'),dur);}
+function showConf(ic,tit,msg,onY){document.getElementById('cic').textContent=ic;document.getElementById('ctit').textContent=tit;document.getElementById('cmsg').textContent=msg;document.getElementById('cyes').onclick=()=>{closeConf();onY();};document.getElementById('cov').style.display='flex';}
+function closeConf(){document.getElementById('cov').style.display='none';}
+
+let quizActive=false,visLocked=false;
+document.addEventListener('visibilitychange',()=>{if(document.hidden&&quizActive&&!visLocked)lockScr();});
+window.addEventListener('blur',()=>{if(quizActive&&!visLocked)lockScr();});
+function lockScr(){visLocked=true;document.getElementById('blk').style.display='flex';document.getElementById('mc').style.filter='blur(12px)';}
+function unlockScreen(){const v=(document.getElementById('bci').value||'').trim();if(v===TC){visLocked=false;document.getElementById('blk').style.display='none';document.getElementById('mc').style.filter='none';document.getElementById('bci').value='';document.getElementById('bcerr').style.display='none';}else document.getElementById('bcerr').style.display='block';}
+
+function doTL(){const v=(document.getElementById('tl-i').value||'').trim();const err=document.getElementById('tl-e');if(v===TC){err.classList.add('hidden');document.getElementById('tl-i').value='';go('pg-dash');startLiveDash();}else err.classList.remove('hidden');}
+
+// Timer
+let tInt=null,sLeft=TOTAL,sUsed=0;
+const fmt=s=>`${String(Math.floor(s/60)).padStart(2,'0')}:${String(s%60).padStart(2,'0')}`;
+function startTimer(){
+  sLeft=TOTAL;sUsed=0;
+  tInt=setInterval(()=>{
+    sLeft--;sUsed++;
+    const pct=Math.round(sLeft/TOTAL*100);
+    const c=document.getElementById('tc'),f=document.getElementById('tf');
+    if(c)c.textContent=fmt(sLeft);
+    document.getElementById('tl2').textContent='المستغرق: '+fmt(sUsed);
+    document.getElementById('tp2').textContent=pct+'% متبقٍ';
+    const bg=pct>50?'linear-gradient(90deg,#64ff96,#ffd700)':pct>20?'linear-gradient(90deg,#ffd700,#ff8c00)':'linear-gradient(90deg,#ff4444,#ff8c00)';
+    if(f){f.style.width=pct+'%';f.style.background=bg;}
+    if(c){c.className='tc';if(sLeft<=120)c.classList.add('danger');else if(sLeft<=300)c.classList.add('warn');}
+    if(sLeft===600)toast('⚠️ تبقّى 10 دقائق!',6000);
+    if(sLeft===300)toast('🔴 تبقّى 5 دقائق!',7000);
+    if(sLeft===120)toast('🚨 دقيقتان فقط!',8000);
+    if(sLeft<=0){clearInterval(tInt);toast('⌛ انتهى الوقت!',5000);setTimeout(()=>finish(true),1500);}
+  },1000);
+}
+function stopTimer(){clearInterval(tInt);}
+
+const QS=[
+  {t:'mcq',lv:'r',lb:'التذكر',tp:'التجوية الفيزيائية',q:'أيٌّ مما يلي يُعدّ مثالاً على التجوية الفيزيائية؟',opts:['تحول لون مسمار حديدي إلى الصدأ','ذوبان الكالسيت في ماء مطر حمضي','تكسر صخر بفعل جذور النباتات','تغير معدن الفلسبار إلى طين'],ans:2,exp:'جذور النباتات تتغلغل في شقوق الصخر وتوسّعها ميكانيكياً دون تغيير تركيبه الكيميائي.'},
+  {t:'mcq',lv:'r',lb:'التذكر',tp:'الانجراف القاري',q:'مَن صاحب نظرية "الانجراف القاري"؟',opts:['ألفريد فيجنر','تشارلز داروين','جيمس هوتون','ماري كوري'],ans:0,exp:'ألفريد فيجنر اقترح فرضية الانجراف القاري عام 1912.'},
+  {t:'mcq',lv:'u',lb:'الفهم',tp:'أنواع التجوية',q:'أيٌّ من الجمل التالية يصف الفرق بين التجوية الفيزيائية والكيميائية؟',opts:['الفيزيائية تُغير التركيب، والكيميائية تُبقيه','الفيزيائية تُبقي التركيب، والكيميائية تُغيره','كلاهما تُغيران التركيب','كلاهما لا تُغيران التركيب'],ans:1,exp:'الفيزيائية: تُفتت الصخر ميكانيكياً. الكيميائية: تُغير تركيبه.'},
+  {t:'mcq',lv:'u',lb:'الفهم',tp:'الصفائح التكتونية',q:'ما الذي يُحرّك الصفائح التكتونية؟',opts:['قوة جذب القمر','دوران الأرض','تيارات الحمل الحراري في الوشاح','الرياح والتيارات البحرية'],ans:2,exp:'تيارات الحمل الحراري في الوشاح تدفع الصفائح.'},
+  {t:'mcq',lv:'a',lb:'التطبيق',tp:'عوامل التعرية',q:'أيٌّ من عوامل التعرية يُكوّن الوديان على شكل حرف U؟',opts:['المياه الجارية','الرياح','الجليد','الأمواج البحرية'],ans:2,exp:'الجليد يكشط قاع الوادي وجوانبه مُكوِّناً وديان عريضة على شكل U.'},
+  {t:'mcq',lv:'a',lb:'التطبيق',tp:'الحدود التكتونية',q:'ماذا يحدث عند تصادم صفيحتين محيطيتين؟',opts:['تكوين حيد وسط المحيط','تكوين خندق عميق وجزر بركانية','زلازل فقط','وادٍ متصدع'],ans:1,exp:'تنزلق الأكثر كثافة مُكوِّنةً خندقاً عميقاً وجزراً بركانية.'},
+  {t:'mcq',lv:'an',lb:'التحليل',tp:'الانجراف القاري',q:'أحافير الميزوصور موجودة في أمريكا الجنوبية وإفريقيا وهو لا يعيش في المياه المالحة. ماذا تستنتج؟',opts:['سبح عبر المحيط','القارتان كانتا متصلتين','الرياح نقلتها','الإنسان القديم نقلها'],ans:1,exp:'وجود الأحافير في القارتين دليل على اتصالهما قديماً.'},
+  {t:'mcq',lv:'an',lb:'التقويم',tp:'عوامل التجوية',q:'تمثال رخامي في منطقة ساحلية وآخر في صحراء — أيهما يتآكل أسرع؟',opts:['الصحراوي بسبب الرياح','الساحلي بسبب الرطوبة والأملاح','الصحراوي بسبب الحرارة','كلاهما بالمعدل نفسه'],ans:1,exp:'التجوية الكيميائية أشد في المناطق الرطبة الساحلية.'},
+  {t:'matching',lv:'a',lb:'التطبيق - توصيل',tp:'القوى والحدود',q:'وصّل كل نوع من أنواع الحدود التكتونية بالقوة المرتبطة به:',left:['الحد المتقارب','الحد المتباعد','الحد الانتقالي'],right:['قوة الشد','قوة القص','قوة الانضغاط'],correct:{0:2,1:0,2:1},exp:'المتقارب=انضغاط | المتباعد=شد | الانتقالي=قص.'},
+  {t:'ordering',lv:'an',lb:'التحليل - ترتيب',tp:'دورة التجوية',q:'رتّب هذه العمليات من الأولى إلى الأخيرة:',items:[{id:'a',text:'استقرار المواد وتراكمها في موقع جديد'},{id:'b',text:'تفتت الصخور بفعل العوامل الطبيعية'},{id:'c',text:'حمل المواد ونقلها بالماء أو الرياح أو الجليد'},{id:'d',text:'انتزاع فتات الصخر وإزالته من موضعه'}],correct:['b','d','c','a'],exp:'التجوية ← التعرية ← النقل ← الترسيب.'}
+];
+
+let cur=0,ANS=new Array(10).fill(null),sData={},lastRec={};
+let mSel=null,dragId=null,activeTab='all',allResults=[];
+const lvC={r:'lr',u:'lu',a:'la',an:'lan'};
+
+function doStart(){
+  const name=(document.getElementById('rn').value||'').trim();
+  const grade=document.getElementById('rg').value;
+  const sec=document.getElementById('rs').value;
+  const err=document.getElementById('re');
+  err.classList.add('hidden');
+  if(!name||name.split(' ').filter(w=>w).length<2){err.textContent='يرجى إدخال الاسم الثنائي على الأقل.';err.classList.remove('hidden');return;}
+  if(!grade){err.textContent='يرجى اختيار الصف.';err.classList.remove('hidden');return;}
+  if(!sec){err.textContent='يرجى اختيار الشعبة.';err.classList.remove('hidden');return;}
+  sData={name,grade,sec};beginQuiz();
+}
+
+function beginQuiz(){
+  go('pg-quiz');quizActive=true;startTimer();
+  ANS=new Array(10).fill(null);cur=0;mSel=null;
+  renderNav();renderQ();
+}
+
+function renderNav(){
+  const n=document.getElementById('qnav');
+  let h='';
+  QS.forEach((_,i)=>{const isCur=i===cur,hasAns=ANS[i]!==null;h+=`<div class="qdot${isCur?' cur':hasAns?' ans':''}" onclick="jumpTo(${i})">${i+1}</div>`;});
+  n.innerHTML=h;
+  const sb=document.getElementById('subbtn'),nx=document.getElementById('nxt');
+  if(cur===9){sb.classList.remove('hidden');nx.classList.add('hidden');}
+  else{sb.classList.add('hidden');nx.classList.remove('hidden');}
+  document.getElementById('prv').classList.toggle('hidden',cur===0);
+}
+function jumpTo(i){cur=i;mSel=null;renderNav();renderQ();}
+
+function renderQ(){
+  const q=QS[cur];
+  const pct=Math.round(cur/10*100);
+  document.getElementById('plbl').textContent=`السؤال ${cur+1} من 10`;
+  document.getElementById('ppct').textContent=pct+'%';
+  document.getElementById('pf').style.width=pct+'%';
+  let h=`<span class="qbg">السؤال ${cur+1}</span><span class="lvbg ${lvC[q.lv]||'lr'}">${q.lb}</span>`;
+  h+=`<div class="qtxt">${q.q}</div>`;
+  if(q.t==='mcq')h+=renderMCQ(q);
+  else if(q.t==='matching')h+=renderMatch(q);
+  else if(q.t==='ordering')h+=renderOrder(q);
+  document.getElementById('qbox').innerHTML=h;
+}
+
+function renderMCQ(q){
+  let h='<div class="opts">';
+  ['أ','ب','ج','د'].forEach((l,i)=>{const s=ANS[cur]===i;h+=`<div class="opt${s?' sel':''}" onclick="pickOpt(${i})"><div class="oltr">${l}</div>${q.opts[i]}</div>`;});
+  return h+'</div>';
+}
+function pickOpt(i){ANS[cur]=i;renderNav();renderQ();}
+
+function renderMatch(q){
+  const ua=ANS[cur]||{};
+  let h='<div class="mg"><div><div class="mc">🔵 الحدود التكتونية</div>';
+  q.left.forEach((item,i)=>{const matched=ua[i]!==undefined,isSel=mSel===i;let cls='mi';if(matched)cls+=' mdone';else if(isSel)cls+=' msel';h+=`<div class="${cls}" onclick="${matched?'':'pLeft('+i+')'}">${item}${matched?' ✓':''}</div>`;});
+  h+='</div><div><div class="mc">🟡 القوى</div>';
+  const usedR=Object.values(ua);
+  q.right.forEach((item,j)=>{const used=usedR.includes(j);let cls='mi mr';if(used)cls+=' mdone';h+=`<div class="${cls}" onclick="${used?'':'pRight('+j+')'}">${item}${used?' ✓':''}</div>`;});
+  h+='</div></div>';
+  if(Object.keys(ua).length>0){h+='<div class="conn">';Object.entries(ua).forEach(([k,v])=>{h+=`<div class="cr"><div class="cl">${q.left[k]}</div><span>→</span><div class="cv">${q.right[v]}</div></div>`;});h+='</div>';}
+  if(mSel===null&&Object.keys(ua).length<3)h+=`<div style="margin-top:9px;font-size:12px;color:#a0c4ff;text-align:center">اضغط حداً من اليسار ثم القوة من اليمين</div>`;
+  return h;
+}
+function pLeft(i){if(ANS[cur]&&ANS[cur][i]!==undefined)return;mSel=i;renderQ();}
+function pRight(j){
+  if(mSel===null){toast('⚠️ اضغط على الحد أولاً',2500);return;}
+  if(Object.values(ANS[cur]||{}).includes(j))return;
+  if(!ANS[cur])ANS[cur]={};
+  ANS[cur][mSel]=j;mSel=null;renderNav();renderQ();
+}
+
+function renderOrder(q){
+  if(!ANS[cur]){let sh=[...q.items].map(x=>x.id);do{sh=sh.sort(()=>Math.random()-.5);}while(sh.every((id,i)=>id===q.correct[i]));ANS[cur]=sh;}
+  const order=ANS[cur];
+  let h='<div class="ol" id="olist">';
+  order.forEach((id,idx)=>{const item=q.items.find(x=>x.id===id);h+=`<div class="oi" id="oi-${id}" draggable="true" ondragstart="ds(event,'${id}')" ondragover="dov(event)" ondrop="dp(event,'${id}')" ondragenter="de(event)" ondragleave="dl(event)"><div class="onum">${idx+1}</div><div style="flex:1;font-size:13px">${item?item.text:''}</div><span style="color:#a0c4ff">⠿</span></div>`;});
+  h+='</div><div style="font-size:11px;color:#a0c4ff;text-align:center;margin-top:4px">اسحب وأفلت لإعادة الترتيب</div>';
+  return h;
+}
+function ds(e,id){dragId=id;e.dataTransfer.effectAllowed='move';setTimeout(()=>{const el=document.getElementById('oi-'+id);if(el)el.classList.add('drg');},0);}
+function dov(e){e.preventDefault();}
+function de(e){e.currentTarget.classList.add('dov');}
+function dl(e){e.currentTarget.classList.remove('dov');}
+function dp(e,tid){e.preventDefault();e.currentTarget.classList.remove('dov');if(!dragId||dragId===tid)return;const a=[...ANS[cur]],fi=a.indexOf(dragId),ti=a.indexOf(tid);a.splice(fi,1);a.splice(ti,0,dragId);ANS[cur]=a;dragId=null;renderNav();renderQ();}
+
+function goNext(){if(cur<9){cur++;mSel=null;renderNav();renderQ();}}
+function goPrev(){if(cur>0){cur--;mSel=null;renderNav();renderQ();}}
+
+function confirmSubmit(){
+  const u=ANS.filter(a=>a===null).length;
+  const msg=u>0?`لديك ${u} سؤال غير مجاب. هل تريد التسليم؟`:'هل أنت متأكد من تسليم الاختبار؟';
+  showConf('📝','تسليم الاختبار',msg,()=>finish(false));
+}
+
+async function finish(timed){
+  stopTimer();quizActive=false;
+  let mcqSc=0,mcqD=[];
+  QS.forEach((q,i)=>{if(q.t==='mcq'){const ok=ANS[i]===q.ans;if(ok)mcqSc++;mcqD.push({qNum:i+1,topic:q.tp,correct:ok,level:q.lb,chosen:ANS[i],rightAns:q.ans});}});
+  let mSc=0;const mQ=QS[8];const mA=ANS[8]||{};
+  Object.entries(mQ.correct).forEach(([k,v])=>{if(mA[k]===v)mSc+=0.67;});mSc=Math.min(2,parseFloat(mSc.toFixed(2)));
+  let oSc=0;const oQ=QS[9];const oA=ANS[9]||oQ.items.map(x=>x.id);
+  oQ.correct.forEach((id,i)=>{if(oA[i]===id)oSc+=0.5;});oSc=parseFloat(oSc.toFixed(2));
+  const total=parseFloat((mcqSc+mSc+oSc).toFixed(2));
+  const pct=Math.round(total/12*100);
+  const gi=gradeInfo(pct);
+  const ts=new Date().toLocaleString('ar-SA',{dateStyle:'short',timeStyle:'short'});
+  lastRec={name:sData.name,section:sData.sec,grade:sData.grade,score:total,mcqScore:mcqSc,matchScore:mSc,orderScore:oSc,pct,gradeLabel:gi.lbl,elapsed:fmt(sUsed),timedOut:timed,time:ts};
+
+  // حفظ في Firebase
+  try{
+    await db.ref('results').push(lastRec);
+    toast('✅ تم إرسال نتيجتك للمعلم!',4000);
+  }catch(e){
+    toast('⚠️ تعذّر الإرسال، تحقق من الاتصال.',4000);
+    console.error(e);
+  }
+
+  showResult(pct,total,gi,timed,mcqD,mSc,oSc);
+}
+
+function gradeInfo(pct){
+  if(pct>=90)return{lbl:'ممتاز',cls:'gex',icon:'🏆'};
+  if(pct>=80)return{lbl:'جيد جداً',cls:'gvg',icon:'🥇'};
+  if(pct>=60)return{lbl:'جيد',cls:'gg',icon:'👍'};
+  if(pct>=50)return{lbl:'مقبول',cls:'gg',icon:'📚'};
+  return{lbl:'راسب',cls:'gbad',icon:'💡'};
+}
+
+function showResult(pct,total,gi,timed,mcqD,mSc,oSc){
+  go('pg-res');
+  document.getElementById('res-icon').textContent=gi.icon;
+  document.getElementById('rpct').textContent=pct+'%';
+  document.getElementById('rsc').textContent=total+' / 12';
+  let msg=timed?'⌛ انتهى الوقت':pct>=90?'ممتاز جداً! 🌟':pct>=80?'جيد جداً! 🏅':pct>=60?'جيد 👍':pct>=50?'مقبول 📚':'لم تجتز الاختبار 💡';
+  document.getElementById('rmsg').textContent=msg;
+  document.getElementById('rsub').innerHTML=`<span style="color:#a0c4ff">${lastRec.name} | شعبة ${lastRec.section}</span><br>
+    <span style="font-size:11px;color:#64c8ff">MCQ: ${lastRec.mcqScore}/8 | توصيل: ${mSc.toFixed(1)}/2 | ترتيب: ${oSc.toFixed(1)}/2 | الزمن: ${lastRec.elapsed}</span>`;
+
+  let rev=`<div style="text-align:right;margin-top:14px"><h3 style="color:#ffd700;margin-bottom:14px;font-size:15px;border-bottom:1px solid rgba(255,215,0,.3);padding-bottom:8px">📋 مراجعة تفصيلية</h3>`;
+  mcqD.forEach(d=>{
+    const q=QS[d.qNum-1];const ok=d.correct;
+    rev+=`<div class="rev-item ${ok?'rok':'rng'}"><div style="display:flex;align-items:center;gap:8px;margin-bottom:8px"><span>${ok?'✅':'❌'}</span><span style="font-size:13px;font-weight:700;color:${ok?'#64ff96':'#ff6464'}">س${d.qNum} — ${d.topic}</span></div><div style="font-size:13px;color:#e0e0ff;margin-bottom:8px">${q.q}</div><div style="display:flex;flex-direction:column;gap:5px;margin-bottom:8px">`;
+    ['أ','ب','ج','د'].forEach((lbl,i)=>{const isC=i===q.ans,isCh=d.chosen===i;const bg=isC?'rgba(100,255,150,.15)':isCh&&!isC?'rgba(255,100,100,.15)':'rgba(255,255,255,.04)';const border=isC?'#64ff96':isCh&&!isC?'#ff6464':'rgba(255,255,255,.1)';const color=isC?'#64ff96':isCh&&!isC?'#ff8080':'#bbb';rev+=`<div style="padding:7px 12px;border-radius:8px;border:1px solid ${border};background:${bg};color:${color};font-size:12px">${isC?'✓ ':isCh&&!isC?'✗ ':'  '}${lbl}. ${q.opts[i]}${isC?' ← صحيح':''}${isCh&&!isC?' ← إجابتك':''}</div>`;});
+    rev+=`</div><div style="background:rgba(255,215,0,.08);border-right:3px solid #ffd700;padding:8px 10px;border-radius:6px;font-size:12px;color:#ffd700">💡 ${q.exp}</div></div>`;
+  });
+  rev+=`</div>`;
+  document.getElementById('rev-area').innerHTML=rev;
+}
+
+// ── لوحة المعلم - مباشر ──────────────────────
+function startLiveDash(){
+  db.ref('results').on('value', snap=>{
+    allResults=[];
+    snap.forEach(child=>{allResults.push({id:child.key,...child.val()});});
+    renderDash(activeTab);
+  });
+}
+
+function renderDash(sec){
+  activeTab=sec;
+  const fil=sec==='all'?allResults:allResults.filter(r=>r.section===sec);
+  const secs=['all','1','2','3','4','5','6'];
+  let th='';secs.forEach(s=>{const cnt=s==='all'?allResults.length:allResults.filter(r=>r.section===s).length;th+=`<button class="tab${s===sec?' act':''}" onclick="renderDash('${s}')">${s==='all'?`الكل(${cnt})`:`ش${s}(${cnt})`}</button>`;});
+  document.getElementById('dtabs').innerHTML=th;
+  const avg=fil.length?Math.round(fil.reduce((a,r)=>a+r.pct,0)/fil.length):0;
+  const top=fil.length?Math.max(...fil.map(r=>r.pct)):0;
+  const low=fil.length?Math.min(...fil.map(r=>r.pct)):0;
+  const pass=fil.filter(r=>r.pct>=50).length;
+  const c90=fil.filter(r=>r.pct>=90).length;
+  document.getElementById('dstats').innerHTML=`
+    <div class="sc"><div class="sv">${fil.length}</div><div class="sl">الطلاب</div></div>
+    <div class="sc"><div class="sv">${avg}%</div><div class="sl">المتوسط</div></div>
+    <div class="sc"><div class="sv">${top}%</div><div class="sl">أعلى</div></div>
+    <div class="sc"><div class="sv">${low}%</div><div class="sl">أدنى</div></div>
+    <div class="sc"><div class="sv">${pass}</div><div class="sl">ناجح</div></div>
+    <div class="sc"><div class="sv">${fil.length-pass}</div><div class="sl">راسب</div></div>
+    <div class="sc"><div class="sv">${c90}🏆</div><div class="sl">امتياز</div></div>`;
+  if(!fil.length){document.getElementById('dbody').innerHTML=`<tr><td colspan="11" style="text-align:center;padding:28px;color:rgba(255,255,255,.4)">في انتظار نتائج الطلاب...</td></tr>`;return;}
+  const sorted=[...fil].sort((a,b)=>b.pct-a.pct);
+  let rows='';
+  sorted.forEach((r,i)=>{const gi=gradeInfo(r.pct);rows+=`<tr><td>${i+1}</td><td style="text-align:right;font-weight:600">${r.name}${r.pct>=90?'🏆':r.pct>=80?'🥇':''}${r.timedOut?'⌛':''}</td><td>${r.section}</td><td>${r.mcqScore||0}/8</td><td>${(+r.matchScore||0).toFixed(1)}/2</td><td>${(+r.orderScore||0).toFixed(1)}/2</td><td><strong>${r.score}/12</strong></td><td>${r.pct}%</td><td><span class="gp ${gi.cls}">${gi.lbl}</span></td><td style="color:#ffd700;font-size:10px">${r.elapsed||'--'}</td><td style="font-size:10px;color:#a0c4ff">${r.time||'--'}</td></tr>`;});
+  document.getElementById('dbody').innerHTML=rows;
+}
+
+function doClear(){
+  showConf('🗑','مسح جميع النتائج','هل أنت متأكد؟ لا يمكن التراجع.',()=>{
+    db.ref('results').remove();
+    toast('✅ تم مسح جميع النتائج.',3000);
+  });
+}
+
+function doXL(){
+  if(!allResults.length){toast('❌ لا توجد بيانات',3000);return;}
+  const data=activeTab==='all'?allResults:allResults.filter(r=>r.section===activeTab);
+  const sorted=[...data].sort((a,b)=>a.section.localeCompare(b.section)||b.pct-a.pct);
+  let h=`<html><head><meta charset="UTF-8"></head><body><table border="1" style="font-family:Arial;direction:rtl"><thead><tr style="background:#1a3a6b;color:#fff;font-weight:bold"><th>#</th><th>الاسم</th><th>الشعبة</th><th>MCQ/8</th><th>توصيل/2</th><th>ترتيب/2</th><th>المجموع/12</th><th>النسبة</th><th>التقدير</th><th>الزمن</th><th>انتهى الوقت</th><th>وقت التسليم</th></tr></thead><tbody>`;
+  sorted.forEach((r,i)=>{const gi=gradeInfo(r.pct);const bg=i%2===0?'#f5f5f5':'#fff';const sc=r.pct>=90?'#006400':r.pct>=80?'#00008B':r.pct>=50?'#8B6914':'#8B0000';h+=`<tr style="background:${bg}"><td>${i+1}</td><td style="font-weight:bold">${r.name}</td><td>${r.section}</td><td>${r.mcqScore||0}</td><td>${(+r.matchScore||0).toFixed(1)}</td><td>${(+r.orderScore||0).toFixed(1)}</td><td style="font-weight:bold;color:${sc}">${r.score}</td><td style="color:${sc}">${r.pct}%</td><td style="font-weight:bold;color:${sc}">${gi.lbl}</td><td>${r.elapsed||'--'}</td><td>${r.timedOut?'نعم':'لا'}</td><td>${r.time||'--'}</td></tr>`;});
+  h+=`</tbody></table></body></html>`;
+  const b=new Blob([h],{type:'application/vnd.ms-excel;charset=utf-8'});
+  const u=URL.createObjectURL(b);const a=document.createElement('a');a.href=u;a.download=`نتائج_${activeTab==='all'?'الكل':'شعبة_'+activeTab}.xls`;document.body.appendChild(a);a.click();document.body.removeChild(a);
+  toast('✅ تم تصدير Excel',3000);
+}
+</script>
+</body>
+</html>
